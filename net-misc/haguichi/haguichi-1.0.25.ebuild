@@ -16,7 +16,7 @@ SRC_URI="http://launchpad.net/${PN}/${MY_MAJORV}/${PV}/+download/${P}-clr${MY_CL
 LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="-* ~amd64 ~x86"
-IUSE="debug"
+IUSE="debug release"
 
 DEPEND="net-misc/logmein-hamachi
 	=dev-dotnet/gtk-sharp-2*
@@ -30,7 +30,8 @@ S="${WORKDIR}/"${PN}"-${PV}"
 src_configure() {
 	econf \
 		--prefix=/usr/ \
-		$(use_enable debug )
+		$(use_enable debug ) \
+		$(use_enable release )
 }
 
 src_compile() {
