@@ -1,23 +1,22 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
 EAPI=5
 
-inherit versionator
+inherit eutils multilib toolchain-funcs versionator
 
 MY_MAJORV=$(get_version_component_range 1-2)
 MY_CLRV="4.0"
 
 DESCRIPTION="GTK2 graphical frontend for LogMeIn Hamachi"
-HOMEPAGE="http://www.haguichi.net/"
+HOMEPAGE="http://haguichi.net"
 SRC_URI="http://launchpad.net/${PN}/${MY_MAJORV}/${PV}/+download/${P}-clr${MY_CLRV}.tar.gz"
-RESTRICT="mirror"
 
 LICENSE="LGPL-2"
 SLOT="0"
-KEYWORDS="~x86 ~amd64"
-IUSE=""
+KEYWORDS="-* ~amd64 ~x86"
+IUSE="debug release"
 
 DEPEND="net-misc/logmein-hamachi
 	=dev-dotnet/gtk-sharp-2*
@@ -26,3 +25,22 @@ DEPEND="net-misc/logmein-hamachi
 	>=dev-dotnet/ndesk-dbus-glib-0.4.0"
 RDEPEND="${DEPEND}"
 
+S="${WORKDIR}/"${PN}"-${PV}"
+
+src_configure() {
+	econf \
+		--prefix=/usr/ \
+		$(use_enable debug ) \
+		$(use_enable release )
+}
+
+src_compile() {
+        emake \
+                "CFLAGS=${CFLAGS}" \
+                "LIBDIR=$(get_libdir)" \
+                || die "Make failed"
+}
+
+src_install() {
+	emake DESTDIR="${D}" install || die "Installation failed"
+}
